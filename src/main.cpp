@@ -50,7 +50,19 @@ int main(int argc, char* argv[]) {
 
         std::cout << token.id << " at " << token.position << std::endl;
 
-        if (!parser.parse(token.id, Parser::StackEntryPayload{})) {
+        Parser::StackEntryPayload payload;
+
+        switch (token.id) {
+            case T_CHARACTER:
+            case T_SPECIAL_CHARACTER:
+                payload.CHARACTER = token.payload.front();
+                break;
+
+            default:
+                break;
+        }
+
+        if (!parser.parse(token.id, payload)) {
             break;
         }
 

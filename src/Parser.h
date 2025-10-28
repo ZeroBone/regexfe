@@ -142,16 +142,18 @@ public:
     union StackEntryPayload {
         void* _grx_object;
         Expression* expression;
-        Conjunction* conjunction;
-        CharacterRange* character_range;
         CharacterClass character_class;
         CharacterAlt* character_alt;
         MatchNode* match;
-        CharacterSet* character_set;
-        Token CHARACTER;
+        char SPECIAL_CHARACTER;
         Quantifier quantifier;
-        Group* group;
         MatchElement* match_elem;
+        char literal;
+        Conjunction* conjunction;
+        CharacterRange* character_range;
+        CharacterSet* character_set;
+        char CHARACTER;
+        Group* group;
 
         StackEntryPayload() {}
         ~StackEntryPayload() {}
@@ -293,13 +295,28 @@ private:
         return _grx_v;
     }
     static StackEntryPayload _reduction9(std::vector<StackEntry>* _grx_stack) {
+        Quantifier Q = _grx_stack->back().payload.quantifier;
         _grx_stack->pop_back();
+        MatchElement* ME = _grx_stack->back().payload.match_elem;
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        MatchNode* v;
+        {
+         v = new MatchNode(ME, Q); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.match = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction10(std::vector<StackEntry>* _grx_stack) {
+        MatchElement* ME = _grx_stack->back().payload.match_elem;
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        MatchNode* v;
+        {
+         v = new MatchNode(ME); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.match = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction11(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
@@ -364,11 +381,11 @@ private:
         return _grx_v;
     }
     static StackEntryPayload _reduction17(std::vector<StackEntry>* _grx_stack) {
-        void* L = _grx_stack->back().payload._grx_object;
+        char L = _grx_stack->back().payload.literal;
         _grx_stack->pop_back();
         MatchElement* v;
         {
-         v = new LiteralMatchElement(); 
+         v = new LiteralMatchElement(L); 
         }
         StackEntryPayload _grx_v;
         _grx_v.match_elem = v;
@@ -539,29 +556,51 @@ private:
         return _grx_v;
     }
     static StackEntryPayload _reduction32(std::vector<StackEntry>* _grx_stack) {
+        char UB = _grx_stack->back().payload.CHARACTER;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        _grx_stack->pop_back();
-        return {._grx_object = nullptr};
-    }
-    static StackEntryPayload _reduction33(std::vector<StackEntry>* _grx_stack) {
-        Token C = _grx_stack->back().payload.CHARACTER;
+        char LB = _grx_stack->back().payload.CHARACTER;
         _grx_stack->pop_back();
         CharacterRange* v;
         {
-         char c = C.payload.front(); v = new CharacterRange(c); 
+         v = new CharacterRange(LB, UB); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_range = v;
+        return _grx_v;
+    }
+    static StackEntryPayload _reduction33(std::vector<StackEntry>* _grx_stack) {
+        char C = _grx_stack->back().payload.CHARACTER;
+        _grx_stack->pop_back();
+        CharacterRange* v;
+        {
+         v = new CharacterRange(C); 
         }
         StackEntryPayload _grx_v;
         _grx_v.character_range = v;
         return _grx_v;
     }
     static StackEntryPayload _reduction34(std::vector<StackEntry>* _grx_stack) {
+        char C = _grx_stack->back().payload.CHARACTER;
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        char v;
+        {
+         v = C; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.literal = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction35(std::vector<StackEntry>* _grx_stack) {
+        char SC = _grx_stack->back().payload.SPECIAL_CHARACTER;
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        char v;
+        {
+         v = SC; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.literal = v;
+        return _grx_v;
     }
     static constexpr StackEntryPayload (*reductions[])(std::vector<StackEntry>*) = {_reduction0, _reduction1, _reduction2, _reduction3, _reduction4, _reduction5, _reduction6, _reduction7, _reduction8, _reduction9, _reduction10, _reduction11, _reduction12, _reduction13, _reduction14, _reduction15, _reduction16, _reduction17, _reduction18, _reduction19, _reduction20, _reduction21, _reduction22, _reduction23, _reduction24, _reduction25, _reduction26, _reduction27, _reduction28, _reduction29, _reduction30, _reduction31, _reduction32, _reduction33, _reduction34, _reduction35};
 

@@ -94,7 +94,12 @@ class MatchElement : public AstNode {};
 
 class DotMatchElement final : public MatchElement {};
 
-class LiteralMatchElement final : public MatchElement {};
+class LiteralMatchElement final : public MatchElement {
+public:
+    char value;
+
+    explicit LiteralMatchElement(const char value): value(value) {}
+};
 
 class CharacterClassMatchElement final : public MatchElement {
 public:
@@ -110,4 +115,12 @@ public:
     explicit CharacterAltMatchElement(CharacterAlt* character_alt): character_alt(character_alt) {}
 };
 
-class MatchNode final : public GroupOrMatch {};
+class MatchNode final : public GroupOrMatch {
+public:
+    MatchElement* element;
+    Quantifier* quantifier;
+
+    explicit MatchNode(MatchElement* el): element(el), quantifier(nullptr) {}
+
+    explicit MatchNode(MatchElement* el, const Quantifier quantifier): element(el), quantifier(new Quantifier(quantifier)) {}
+};

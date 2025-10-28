@@ -7,7 +7,8 @@
     #include "token.hpp"
 }
 
-%type CHARACTER Token
+%type CHARACTER char
+%type SPECIAL_CHARACTER char
 
 %type expression {Expression*}
 expression = expression(E) OR conjunction(C); { v = E; v->children.push_back(C); }
@@ -27,8 +28,8 @@ group = LEFT_PARENTHESIS expression(E) RIGHT_PARENTHESIS; { v = new Group(false,
 group = LEFT_PARENTHESIS_QUESTION_MARK_COLON expression(E) RIGHT_PARENTHESIS; { v = new Group(true, E); }
 
 %type match {MatchNode*}
-match = match_elem(ME) quantifier(Q);
-match = match_elem(ME);
+match = match_elem(ME) quantifier(Q); { v = new MatchNode(ME, Q); }
+match = match_elem(ME); { v = new MatchNode(ME); }
 
 %type quantifier Quantifier
 quantifier = STAR; { v = Quantifier::Star; }
@@ -39,7 +40,7 @@ quantifier = QUESTION_MARK; { v = Quantifier::QuestionMark; }
 match_elem = DOT; { v = new DotMatchElement(); }
 match_elem = character_class(CC); { v = new CharacterClassMatchElement(CC); }
 match_elem = character_alt(CA); { v = new CharacterAltMatchElement(CA); }
-match_elem = literal(L); { v = new LiteralMatchElement(); }
+match_elem = literal(L); { v = new LiteralMatchElement(L); }
 
 %type character_class {CharacterClass}
 character_class = WORD_CHARS; { v = CharacterClass::WordChars; }
@@ -62,8 +63,9 @@ character_set = character_set(CS) character_class(CC); { v = CS; v->classes.push
 character_set = character_class(CC); { v = new CharacterSet(CC); }
 
 %type character_range {CharacterRange*}
-character_range = CHARACTER(LB) MINUS CHARACTER(UB);
-character_range = CHARACTER(C); { char c = C.payload.front(); v = new CharacterRange(c); }
+character_range = CHARACTER(LB) MINUS CHARACTER(UB); { v = new CharacterRange(LB, UB); }
+character_range = CHARACTER(C); { v = new CharacterRange(C); }
 
-literal = CHARACTER;
-literal = SPECIAL_CHARACTER;
+%type literal {char}
+literal = CHARACTER(C); { v = C; }
+literal = SPECIAL_CHARACTER(SC); { v = SC; }
