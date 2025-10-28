@@ -1,0 +1,49 @@
+%name Parser
+%algo SLR
+%target cpp
+
+expression = conjunction OR expression;
+expression = conjunction;
+// empty conjunction
+expression = ;
+
+conjunction = group conjunction;
+conjunction = group;
+conjunction = match conjunction;
+conjunction = match;
+
+group = LEFT_PARENTHESIS expression RIGHT_PARENTHESIS;
+// non-capturing group
+group = LEFT_PARENTHESIS_QUESTION_MARK_COLON expression RIGHT_PARENTHESIS;
+
+match = match_elem quantifier;
+match = match_elem;
+
+quantifier = STAR;
+quantifier = PLUS;
+quantifier = QUESTION_MARK;
+
+match_elem = DOT;
+match_elem = character_class;
+match_elem = character_alt;
+match_elem = LITERAL;
+
+character_class = WORD_CHARS;
+character_class = NON_WORD_CHARS;
+character_class = DIGIT_CHARS;
+character_class = NON_DIGIT_CHARS;
+character_class = WHITESPACE_CHARS;
+character_class = NON_WHITESPACE_CHARS;
+
+character_alt = LEFT_BRACKET character_set RIGHT_BRACKET;
+character_alt = LEFT_BRACKET UP_ARROW character_set RIGHT_BRACKET;
+character_alt = LEFT_BRACKET RIGHT_BRACKET character_set RIGHT_BRACKET;
+character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set RIGHT_BRACKET;
+
+character_set = character_range character_set;
+character_set = character_range;
+character_set = character_class character_set;
+character_set = character_class;
+
+character_range = CHARACTER MINUS CHARACTER;
+character_range = CHARACTER;

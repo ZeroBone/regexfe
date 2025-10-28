@@ -39,3 +39,8 @@
 
 # debug information files
 *.dwo
+
+.idea
+*.jar
+src/Parser_debug.txt
+mimir
