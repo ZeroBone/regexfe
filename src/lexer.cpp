@@ -2,6 +2,75 @@
 
 #include "Parser.h"
 
+bool LexerBackend::peek() {
+
+    if (window.empty()) {
+        assert(head == 0);
+        // read from stream for the very first time
+        if (char c; stream.get(c)) {
+            window.push(c);
+            return true;
+        }
+        return false;
+    }
+
+    assert(peek_offset < window.size());
+
+    if (peek_offset < window.size() - 1) {
+        // we want to peek into a position already present in the window, i.e., already obtained from the stream
+        peek_offset += 1;
+        return true;
+    }
+
+    // the peek position is currently pointing at the very end of the window
+    // thus, we need to obtain a new character from the stream and increase the window
+    if (char c; stream.get(c)) {
+        window.push(c);
+        peek_offset += 1;
+        return true;
+    }
+
+    return false;
+}
+
+bool LexerBackend::read() {
+    if (window.empty()) {
+        assert(head == 0);
+        if (char c; stream.get(c)) {
+            window.push(c);
+            return true;
+        }
+        return false;
+    }
+
+    if (peek_offset >= 1) {
+        assert(window.size() >= 2);
+        window.pop();
+        head++;
+        peek_offset--;
+        return true;
+    }
+
+    assert(peek_offset == 0);
+    assert(!window.empty());
+
+    if (window.size() >= 2) {
+        window.pop();
+        head++;
+        return true;
+    }
+
+    assert(window.size() == 1);
+
+    if (char c; stream.get(c)) {
+        const std::string s(1, c);
+        window = StringQueue(s);
+        head++;
+        return true;
+    }
+
+    return false;
+}
 
 Token Lexer::lex() {
 
