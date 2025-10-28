@@ -20,9 +20,14 @@ public:
         return data.back();
     }
 
-    void pop() {
-        if (head < data.size()) {
-            head++;
+    void pop(const size_t k = 1) {
+
+        if (k == 0) {
+            return;
+        }
+
+        if (head + k <= data.size()) {
+            head += k;
         }
 
         if (head > 1024 && head * 2 > data.size()) {

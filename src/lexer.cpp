@@ -1,8 +1,10 @@
 #include "lexer.hpp"
-
 #include "Parser.h"
 
+
 Token Lexer::lex() {
+
+    backend.move_peek_to_head();
 
     if (!backend.peek()) {
         return Token(T_EOF, backend.head_position());

@@ -13,9 +13,11 @@
 class LexerBackend {
     std::istringstream stream;
 
-    size_t head_pos = std::numeric_limits<size_t>::max();
+    size_t head = 0;
+    size_t peek_offset = 0;
 
-    // invariant: window is the string between head_position and peek_position
+    // invariant: window is the string between head and the last character of the stream that was read so far
+    // invariant: either head = 0 and window = "" or 0 <= peek_offset < window.size()
     StringQueue window = StringQueue("");
 
 public:
@@ -31,56 +33,98 @@ public:
         return window.back();
     }
 
-    [[nodiscard]] bool window_empty() const {
-        return window.empty();
-    }
-
     [[nodiscard]] size_t head_position() const {
-        if (head_pos == std::numeric_limits<size_t>::max()) {
-            return 0;
-        }
-        return head_pos;
+        return head;
     }
 
-    [[nodiscard]] size_t peeking_position() const {
-
-        if (head_pos != std::numeric_limits<size_t>::max()) {
-            return head_pos + window.size();
-        }
-
-        assert(!window.empty());
-        return window.size() - 1;
-
+    [[nodiscard]] size_t peek_position() const {
+        return head + peek_offset;
     }
 
     bool peek() {
+
+        if (window.empty()) {
+            assert(head == 0);
+            // read from stream for the very first time
+            if (char c; stream.get(c)) {
+                window.push(c);
+                return true;
+            }
+        }
+
+        assert(peek_offset < window.size());
+
+        if (peek_offset < window.size() - 1) {
+            // we want to peek into a position already present in the window, i.e., already obtained from the stream
+            peek_offset += 1;
+            return true;
+        }
+
+        // the peek position is currently pointing at the very end of the window
+        // thus, we need to obtain a new character from the stream and increase the window
         if (char c; stream.get(c)) {
             window.push(c);
+            peek_offset += 1;
             return true;
         }
 
         return false;
     }
 
-    bool read() {
-
-        if (window.empty()) {
-            char c;
-            return static_cast<bool>(stream.get(c));
-        }
-
-        window.pop();
-
-        if (head_pos == std::numeric_limits<size_t>::max()) {
-            head_pos = 0;
-        }
-        else {
-            head_pos++;
-        }
-
-        return true;
+    void move_peek_to_head() {
+        peek_offset = 0;
     }
 
+    std::string string_between_head_and_peek() const {
+        assert(!window.empty());
+        assert(peek_offset < window.size());
+        return std::string(window.view().substr(0, peek_offset));
+    }
+
+    void move_head_to_peek() {
+        head += peek_offset;
+        window.pop(peek_offset);
+        peek_offset = 0;
+    }
+
+    bool read() {
+        if (window.empty()) {
+            assert(head == 0);
+            if (char c; stream.get(c)) {
+                window.push(c);
+            }
+            else {
+                return false;
+            }
+        }
+
+        if (peek_offset >= 1) {
+            assert(window.size() >= 2);
+            head++;
+            peek_offset--;
+            return true;
+        }
+
+        assert(peek_offset == 0);
+        assert(!window.empty());
+
+        if (window.size() >= 2) {
+            window.pop();
+            head++;
+            return true;
+        }
+
+        assert(window.size() == 1);
+
+        if (char c; stream.get(c)) {
+            std::string s(1, c);
+            window = StringQueue(s);
+            head++;
+            return true;
+        }
+
+        return false;
+    }
 };
 
 class LexerError : public std::exception {
