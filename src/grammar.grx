@@ -2,51 +2,68 @@
 %algo SLR
 %target cpp
 
-expression = conjunction OR expression;
-expression = conjunction;
+%top {
+    #include "ast.hpp"
+    #include "token.hpp"
+}
+
+%type CHARACTER Token
+
+%type expression {Expression*}
+expression = expression(E) OR conjunction(C); { v = E; v->children.push_back(C); }
+expression = conjunction(C); { v = new Expression(C); }
 // empty conjunction
-expression = ;
+expression = ;  { v = new Expression(); }
 
-conjunction = group conjunction;
-conjunction = group;
-conjunction = match conjunction;
-conjunction = match;
+%type conjunction {Conjunction*}
+conjunction = conjunction(C) group(G); { v = C; v->children.push_back(G); }
+conjunction = group(G); { v = new Conjunction(G); }
+conjunction = conjunction(C) match(M); { v = C; v->children.push_back(M); }
+conjunction = match(M); { v = new Conjunction(M); }
 
-group = LEFT_PARENTHESIS expression RIGHT_PARENTHESIS;
+%type group {Group*}
+group = LEFT_PARENTHESIS expression(E) RIGHT_PARENTHESIS; { v = new Group(false, E); }
 // non-capturing group
-group = LEFT_PARENTHESIS_QUESTION_MARK_COLON expression RIGHT_PARENTHESIS;
+group = LEFT_PARENTHESIS_QUESTION_MARK_COLON expression(E) RIGHT_PARENTHESIS; { v = new Group(true, E); }
 
-match = match_elem quantifier;
-match = match_elem;
+%type match {MatchNode*}
+match = match_elem(ME) quantifier(Q);
+match = match_elem(ME);
 
-quantifier = STAR;
-quantifier = PLUS;
-quantifier = QUESTION_MARK;
+%type quantifier Quantifier
+quantifier = STAR; { v = Quantifier::Star; }
+quantifier = PLUS; { v = Quantifier::Plus; }
+quantifier = QUESTION_MARK; { v = Quantifier::QuestionMark; }
 
-match_elem = DOT;
-match_elem = character_class;
-match_elem = character_alt;
-match_elem = literal;
+%type match_elem {MatchElement*}
+match_elem = DOT; { v = new DotMatchElement(); }
+match_elem = character_class(CC); { v = new CharacterClassMatchElement(CC); }
+match_elem = character_alt(CA); { v = new CharacterAltMatchElement(CA); }
+match_elem = literal(L); { v = new LiteralMatchElement(); }
 
-character_class = WORD_CHARS;
-character_class = NON_WORD_CHARS;
-character_class = DIGIT_CHARS;
-character_class = NON_DIGIT_CHARS;
-character_class = WHITESPACE_CHARS;
-character_class = NON_WHITESPACE_CHARS;
+%type character_class {CharacterClass}
+character_class = WORD_CHARS; { v = CharacterClass::WordChars; }
+character_class = NON_WORD_CHARS; { v = CharacterClass::NonWordChars; }
+character_class = DIGIT_CHARS; { v = CharacterClass::DigitChars; }
+character_class = NON_DIGIT_CHARS; { v = CharacterClass::NonDigitChars; }
+character_class = WHITESPACE_CHARS; { v = CharacterClass::WhiteSpaceChars; }
+character_class = NON_WHITESPACE_CHARS; { v = CharacterClass::NonWhiteSpaceChars; }
 
-character_alt = LEFT_BRACKET character_set RIGHT_BRACKET;
-character_alt = LEFT_BRACKET UP_ARROW character_set RIGHT_BRACKET;
-character_alt = LEFT_BRACKET RIGHT_BRACKET character_set RIGHT_BRACKET;
-character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set RIGHT_BRACKET;
+%type character_alt {CharacterAlt*}
+character_alt = LEFT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::Normal, CS); }
+character_alt = LEFT_BRACKET UP_ARROW character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::Negated, CS); }
+character_alt = LEFT_BRACKET RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NormalIncludingClosingBracket, CS); }
+character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NormalNotIncludingClosingBracket, CS); }
 
-character_set = character_range character_set;
-character_set = character_range;
-character_set = character_class character_set;
-character_set = character_class;
+%type character_set {CharacterSet*}
+character_set = character_set(CS) character_range(CR); { v = CS; v->ranges.push_back(CR); }
+character_set = character_range(CR); { v = new CharacterSet(CR); }
+character_set = character_set(CS) character_class(CC); { v = CS; v->classes.push_back(CC); }
+character_set = character_class(CC); { v = new CharacterSet(CC); }
 
-character_range = CHARACTER MINUS CHARACTER;
-character_range = CHARACTER;
+%type character_range {CharacterRange*}
+character_range = CHARACTER(LB) MINUS CHARACTER(UB);
+character_range = CHARACTER(C); { char c = C.payload.front(); v = new CharacterRange(c); }
 
 literal = CHARACTER;
 literal = SPECIAL_CHARACTER;

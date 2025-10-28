@@ -33,11 +33,6 @@ int main(int argc, char* argv[]) {
 
     // parse regular expression
 
-    /*if (regex_pattern.empty()) {
-        std::cerr << "Syntax error: regex is empty." << std::endl;
-        return 0xafd;
-    }*/
-
     Lexer lexer(regex_pattern);
     Parser parser;
 
@@ -55,7 +50,9 @@ int main(int argc, char* argv[]) {
 
         std::cout << token.id << " at " << token.position << std::endl;
 
-        parser.parse(token.id, Parser::StackEntryPayload{});
+        if (!parser.parse(token.id, Parser::StackEntryPayload{})) {
+            break;
+        }
 
         if (token.id == T_EOF) {
             break;

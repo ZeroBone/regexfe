@@ -18,7 +18,9 @@ add_executable(${PROJECT_NAME} src/Parser.h src/main.cpp
         src/lexer.hpp
         src/token.hpp
         src/lexer.cpp
-        src/strqueue.hpp)
+        src/strqueue.hpp
+        src/mimir.hpp
+        src/ast.hpp)
 
 
 if(NOT MSVC)

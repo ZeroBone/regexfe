@@ -5,6 +5,9 @@
 #include <vector>
 #include <cstring> // for std::memcpy
 
+#include "ast.hpp"
+#include "token.hpp"
+
 class Parser {
 private:
 #define T_WORD_CHARS 0
@@ -31,45 +34,22 @@ private:
 #define TERMINAL_COUNT 21
 #define NON_TERMINAL_COUNT 11
     static constexpr int gotoTable[] = {
-        15,19,0,9,3,20,0,0,11,2,13,
-        0,0,0,0,0,0,0,25,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        26,19,0,9,3,20,0,0,11,2,13,
+        4,10,0,11,9,13,0,0,6,2,21,
+        0,0,0,0,0,0,0,22,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
-        0,0,30,32,0,0,31,0,0,0,0,
-        0,33,0,9,3,20,0,0,11,2,13,
+        27,10,0,11,9,13,0,0,6,2,21,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
-        34,19,0,9,3,20,0,0,11,2,13,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,11,9,29,0,0,28,2,21,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
-        0,36,0,9,3,20,0,0,11,2,13,
+        30,10,0,11,9,13,0,0,6,2,21,
         0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,30,32,0,0,40,0,0,0,0,
-        0,0,30,32,0,0,41,0,0,0,0,
-        0,0,30,32,0,0,42,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,30,32,0,0,44,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        46,19,0,9,3,20,0,0,11,2,13,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,
-        0,0,30,32,0,0,48,0,0,0,0,
+        0,0,33,35,0,0,31,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
@@ -79,65 +59,99 @@ private:
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
+        0,37,0,11,9,13,0,0,6,2,21,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,40,42,0,0,0,0,0,0,0,
+        0,0,33,35,0,0,43,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,33,35,0,0,45,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,11,9,29,0,0,28,2,21,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,40,42,0,0,0,0,0,0,0,
+        0,0,33,35,0,0,48,0,0,0,0,
+        0,0,40,42,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,
+        0,0,40,42,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0,
         0,0,0,0,0,0,0,0,0,0,0};
     static constexpr int actionTable[] = {
-        17,0,-4,10,18,16,21,0,6,14,0,4,0,5,7,8,0,0,12,0,-4,
-        -12,-12,-12,-12,-12,-12,-12,0,-12,-12,0,-12,0,-12,-12,-12,22,24,-12,23,-12,
-        -18,-18,-18,-18,-18,-18,-18,0,-18,-18,0,-18,0,-18,-18,-18,-18,-18,-18,-18,-18,
-        -22,-22,-22,-22,-22,-22,-22,0,-22,-22,0,-22,-22,-22,-22,-22,-22,-22,-22,-22,-22,
-        17,0,-4,10,18,16,21,0,6,14,0,4,0,5,7,8,0,0,12,0,-4,
-        -37,-37,-37,-37,-37,-37,-37,0,-37,-37,0,-37,0,-37,-37,-37,-37,-37,-37,-37,-37,
-        -21,-21,-21,-21,-21,-21,-21,0,-21,-21,0,-21,-21,-21,-21,-21,-21,-21,-21,-21,-21,
+        19,-4,-4,16,8,18,15,0,20,7,0,17,0,14,5,3,0,0,12,0,-4,
+        -12,-12,-12,-12,-12,-12,-12,0,-12,-12,0,-12,0,-12,-12,-12,24,23,-12,25,-12,
         -24,-24,-24,-24,-24,-24,-24,0,-24,-24,0,-24,-24,-24,-24,-24,-24,-24,-24,-24,-24,
+        0,26,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,
+        -21,-21,-21,-21,-21,-21,-21,0,-21,-21,0,-21,-21,-21,-21,-21,-21,-21,-21,-21,-21,
+        -6,-6,-6,-6,-6,-6,-6,0,-6,-6,0,-6,0,-6,-6,-6,0,0,-6,0,-6,
+        19,-4,-4,16,8,18,15,0,20,7,0,17,0,14,5,3,0,0,12,0,-4,
+        -23,-23,-23,-23,-23,-23,-23,0,-23,-23,0,-23,-23,-23,-23,-23,-23,-23,-23,-23,-23,
+        -18,-18,-18,-18,-18,-18,-18,0,-18,-18,0,-18,0,-18,-18,-18,-18,-18,-18,-18,-18,
+        19,-3,-3,16,8,18,15,0,20,7,0,17,0,14,5,3,0,0,12,0,-3,
         -17,-17,-17,-17,-17,-17,-17,0,-17,-17,0,-17,0,-17,-17,-17,-17,-17,-17,-17,-17,
-        17,0,0,0,18,16,0,28,0,0,0,4,29,0,7,8,0,0,27,0,0,
-        17,-6,-6,10,18,16,21,0,6,14,0,4,0,5,7,8,0,0,12,0,-6,
         -36,-36,-36,-36,-36,-36,-36,0,-36,-36,0,-36,0,-36,-36,-36,-36,-36,-36,-36,-36,
-        -19,-19,-19,-19,-19,-19,-19,0,-19,-19,0,-19,0,-19,-19,-19,-19,-19,-19,-19,-19,
-        17,0,-4,10,18,16,21,0,6,14,0,4,0,5,7,8,0,0,12,0,-4,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,
+        -8,-8,-8,-8,-8,-8,-8,0,-8,-8,0,-8,0,-8,-8,-8,0,0,-8,0,-8,
+        19,-4,-4,16,8,18,15,0,20,7,0,17,0,14,5,3,0,0,12,0,-4,
+        -16,-16,-16,-16,-16,-16,-16,0,-16,-16,0,-16,0,-16,-16,-16,-16,-16,-16,-16,-16,
+        19,0,0,0,8,18,0,32,0,0,0,17,34,0,5,3,0,0,36,0,0,
+        -22,-22,-22,-22,-22,-22,-22,0,-22,-22,0,-22,-22,-22,-22,-22,-22,-22,-22,-22,-22,
         -25,-25,-25,-25,-25,-25,-25,0,-25,-25,0,-25,-25,-25,-25,-25,-25,-25,-25,-25,-25,
         -20,-20,-20,-20,-20,-20,-20,0,-20,-20,0,-20,-20,-20,-20,-20,-20,-20,-20,-20,-20,
-        -23,-23,-23,-23,-23,-23,-23,0,-23,-23,0,-23,-23,-23,-23,-23,-23,-23,-23,-23,-23,
-        0,35,-3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-3,
-        17,-8,-8,10,18,16,21,0,6,14,0,4,0,5,7,8,0,0,12,0,-8,
-        -16,-16,-16,-16,-16,-16,-16,0,-16,-16,0,-16,0,-16,-16,-16,-16,-16,-16,-16,-16,
+        -37,-37,-37,-37,-37,-37,-37,0,-37,-37,0,-37,0,-37,-37,-37,-37,-37,-37,-37,-37,
+        -19,-19,-19,-19,-19,-19,-19,0,-19,-19,0,-19,0,-19,-19,-19,-19,-19,-19,-19,-19,
+        -11,-11,-11,-11,-11,-11,-11,0,-11,-11,0,-11,0,-11,-11,-11,0,0,-11,0,-11,
+        -13,-13,-13,-13,-13,-13,-13,0,-13,-13,0,-13,0,-13,-13,-13,0,0,-13,0,-13,
         -15,-15,-15,-15,-15,-15,-15,0,-15,-15,0,-15,0,-15,-15,-15,0,0,-15,0,-15,
         -14,-14,-14,-14,-14,-14,-14,0,-14,-14,0,-14,0,-14,-14,-14,0,0,-14,0,-14,
-        -13,-13,-13,-13,-13,-13,-13,0,-13,-13,0,-13,0,-13,-13,-13,0,0,-13,0,-13,
-        -11,-11,-11,-11,-11,-11,-11,0,-11,-11,0,-11,0,-11,-11,-11,0,0,-11,0,-11,
-        0,0,37,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        -35,0,0,0,-35,-35,0,0,0,0,38,-35,-35,0,-35,-35,0,0,-35,0,0,
-        17,0,0,0,18,16,0,0,0,0,0,4,39,0,7,8,0,0,27,0,0,
-        17,0,0,0,18,16,0,0,0,0,0,4,0,0,7,8,0,0,27,0,0,
-        17,0,0,0,18,16,0,0,0,0,0,4,-31,0,7,8,0,0,27,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,43,0,0,0,0,0,0,0,0,
-        17,0,0,0,18,16,0,0,0,0,0,4,-33,0,7,8,0,0,27,0,0,
-        0,-5,-5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-5,
-        0,0,45,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-        17,0,-4,10,18,16,21,0,6,14,0,4,0,5,7,8,0,0,12,0,-4,
-        0,-7,-7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-7,
-        -9,-9,-9,-9,-9,-9,-9,0,-9,-9,0,-9,0,-9,-9,-9,0,0,-9,0,-9,
-        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,47,0,0,
-        17,0,0,0,18,16,0,0,0,0,0,4,0,0,7,8,0,0,27,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,49,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,50,0,0,0,0,0,0,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,-30,0,0,0,0,0,0,0,0,
-        -26,-26,-26,-26,-26,-26,-26,0,-26,-26,0,-26,0,-26,-26,-26,-26,-26,-26,-26,-26,
-        0,0,0,0,0,0,0,0,0,0,0,0,-32,0,0,0,0,0,0,0,0,
+        19,0,0,16,8,18,15,0,20,7,0,17,0,14,5,3,0,0,12,0,0,
+        0,26,38,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        -5,-5,-5,-5,-5,-5,-5,0,-5,-5,0,-5,0,-5,-5,-5,0,0,-5,0,-5,
+        -7,-7,-7,-7,-7,-7,-7,0,-7,-7,0,-7,0,-7,-7,-7,0,0,-7,0,-7,
+        0,26,39,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+        19,0,0,0,8,18,0,0,0,0,0,17,41,0,5,3,0,0,36,0,0,
+        19,0,0,0,8,18,0,0,0,0,0,17,44,0,5,3,0,0,36,0,0,
+        -31,0,0,0,-31,-31,0,0,0,0,0,-31,-31,0,-31,-31,0,0,-31,0,0,
+        19,0,0,0,8,18,0,0,0,0,0,17,0,0,5,3,0,0,36,0,0,
+        -33,0,0,0,-33,-33,0,0,0,0,0,-33,-33,0,-33,-33,0,0,-33,0,0,
+        -35,0,0,0,-35,-35,0,0,0,0,46,-35,-35,0,-35,-35,0,0,-35,0,0,
+        19,-2,-2,16,8,18,15,0,20,7,0,17,0,14,5,3,0,0,12,0,-2,
         -10,-10,-10,-10,-10,-10,-10,0,-10,-10,0,-10,0,-10,-10,-10,0,0,-10,0,-10,
-        0,0,-2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-2,
-        -34,0,0,0,-34,-34,0,0,0,0,0,-34,-34,0,-34,-34,0,0,-34,0,0,
-        0,0,0,0,0,0,0,0,0,0,0,0,51,0,0,0,0,0,0,0,0,
+        -9,-9,-9,-9,-9,-9,-9,0,-9,-9,0,-9,0,-9,-9,-9,0,0,-9,0,-9,
+        -30,0,0,0,-30,-30,0,0,0,0,0,-30,-30,0,-30,-30,0,0,-30,0,0,
+        -26,-26,-26,-26,-26,-26,-26,0,-26,-26,0,-26,0,-26,-26,-26,-26,-26,-26,-26,-26,
+        -32,0,0,0,-32,-32,0,0,0,0,0,-32,-32,0,-32,-32,0,0,-32,0,0,
+        19,0,0,0,8,18,0,0,0,0,0,17,47,0,5,3,0,0,36,0,0,
+        19,0,0,0,8,18,0,0,0,0,0,17,0,0,5,3,0,0,36,0,0,
+        19,0,0,0,8,18,0,0,0,0,0,17,49,0,5,3,0,0,36,0,0,
+        0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,50,0,0,
         -27,-27,-27,-27,-27,-27,-27,0,-27,-27,0,-27,0,-27,-27,-27,-27,-27,-27,-27,-27,
+        19,0,0,0,8,18,0,0,0,0,0,17,51,0,5,3,0,0,36,0,0,
         -28,-28,-28,-28,-28,-28,-28,0,-28,-28,0,-28,0,-28,-28,-28,-28,-28,-28,-28,-28,
+        -34,0,0,0,-34,-34,0,0,0,0,0,-34,-34,0,-34,-34,0,0,-34,0,0,
         -29,-29,-29,-29,-29,-29,-29,0,-29,-29,0,-29,0,-29,-29,-29,-29,-29,-29,-29,-29};
     static constexpr int productionLabels[] = {0,0,0,1,1,1,1,8,8,5,5,7,7,7,9,9,9,9,3,3,3,3,3,3,4,4,4,4,6,6,6,6,2,2,10,10};
 public:
     union StackEntryPayload {
         void* _grx_object;
+        Expression* expression;
+        Conjunction* conjunction;
+        CharacterRange* character_range;
+        CharacterClass character_class;
+        CharacterAlt* character_alt;
+        MatchNode* match;
+        CharacterSet* character_set;
+        Token CHARACTER;
+        Quantifier quantifier;
+        Group* group;
+        MatchElement* match_elem;
 
         StackEntryPayload() {}
         ~StackEntryPayload() {}
@@ -171,172 +185,383 @@ private:
         StackEntry(StackEntry&&) = default;
     };
     static StackEntryPayload _reduction0(std::vector<StackEntry>* _grx_stack) {
+        Conjunction* C = _grx_stack->back().payload.conjunction;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
+        Expression* E = _grx_stack->back().payload.expression;
         _grx_stack->pop_back();
-        return {};
+        Expression* v;
+        {
+         v = E; v->children.push_back(C); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.expression = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction1(std::vector<StackEntry>* _grx_stack) {
+        Conjunction* C = _grx_stack->back().payload.conjunction;
         _grx_stack->pop_back();
-        return {};
+        Expression* v;
+        {
+         v = new Expression(C); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.expression = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction2(std::vector<StackEntry>* _grx_stack) {
-        return {};
+        Expression* v;
+        {
+         v = new Expression(); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.expression = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction3(std::vector<StackEntry>* _grx_stack) {
+        Group* G = _grx_stack->back().payload.group;
         _grx_stack->pop_back();
+        Conjunction* C = _grx_stack->back().payload.conjunction;
         _grx_stack->pop_back();
-        return {};
+        Conjunction* v;
+        {
+         v = C; v->children.push_back(G); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.conjunction = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction4(std::vector<StackEntry>* _grx_stack) {
+        Group* G = _grx_stack->back().payload.group;
         _grx_stack->pop_back();
-        return {};
+        Conjunction* v;
+        {
+         v = new Conjunction(G); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.conjunction = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction5(std::vector<StackEntry>* _grx_stack) {
+        MatchNode* M = _grx_stack->back().payload.match;
         _grx_stack->pop_back();
+        Conjunction* C = _grx_stack->back().payload.conjunction;
         _grx_stack->pop_back();
-        return {};
+        Conjunction* v;
+        {
+         v = C; v->children.push_back(M); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.conjunction = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction6(std::vector<StackEntry>* _grx_stack) {
+        MatchNode* M = _grx_stack->back().payload.match;
         _grx_stack->pop_back();
-        return {};
+        Conjunction* v;
+        {
+         v = new Conjunction(M); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.conjunction = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction7(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
+        Expression* E = _grx_stack->back().payload.expression;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        Group* v;
+        {
+         v = new Group(false, E); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.group = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction8(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
+        Expression* E = _grx_stack->back().payload.expression;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        Group* v;
+        {
+         v = new Group(true, E); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.group = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction9(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        return {._grx_object = nullptr};
     }
     static StackEntryPayload _reduction10(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        return {._grx_object = nullptr};
     }
     static StackEntryPayload _reduction11(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        Quantifier v;
+        {
+         v = Quantifier::Star; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.quantifier = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction12(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        Quantifier v;
+        {
+         v = Quantifier::Plus; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.quantifier = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction13(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        Quantifier v;
+        {
+         v = Quantifier::QuestionMark; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.quantifier = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction14(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        MatchElement* v;
+        {
+         v = new DotMatchElement(); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.match_elem = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction15(std::vector<StackEntry>* _grx_stack) {
+        CharacterClass CC = _grx_stack->back().payload.character_class;
         _grx_stack->pop_back();
-        return {};
+        MatchElement* v;
+        {
+         v = new CharacterClassMatchElement(CC); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.match_elem = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction16(std::vector<StackEntry>* _grx_stack) {
+        CharacterAlt* CA = _grx_stack->back().payload.character_alt;
         _grx_stack->pop_back();
-        return {};
+        MatchElement* v;
+        {
+         v = new CharacterAltMatchElement(CA); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.match_elem = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction17(std::vector<StackEntry>* _grx_stack) {
+        void* L = _grx_stack->back().payload._grx_object;
         _grx_stack->pop_back();
-        return {};
+        MatchElement* v;
+        {
+         v = new LiteralMatchElement(); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.match_elem = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction18(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        CharacterClass v;
+        {
+         v = CharacterClass::WordChars; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_class = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction19(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        CharacterClass v;
+        {
+         v = CharacterClass::NonWordChars; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_class = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction20(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        CharacterClass v;
+        {
+         v = CharacterClass::DigitChars; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_class = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction21(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        CharacterClass v;
+        {
+         v = CharacterClass::NonDigitChars; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_class = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction22(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        CharacterClass v;
+        {
+         v = CharacterClass::WhiteSpaceChars; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_class = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction23(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        CharacterClass v;
+        {
+         v = CharacterClass::NonWhiteSpaceChars; 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_class = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction24(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
+        CharacterSet* CS = _grx_stack->back().payload.character_set;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        CharacterAlt* v;
+        {
+         v = new CharacterAlt(CharacterAltType::Normal, CS); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_alt = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction25(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
+        CharacterSet* CS = _grx_stack->back().payload.character_set;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        CharacterAlt* v;
+        {
+         v = new CharacterAlt(CharacterAltType::Negated, CS); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_alt = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction26(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
+        CharacterSet* CS = _grx_stack->back().payload.character_set;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        CharacterAlt* v;
+        {
+         v = new CharacterAlt(CharacterAltType::NormalIncludingClosingBracket, CS); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_alt = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction27(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
+        CharacterSet* CS = _grx_stack->back().payload.character_set;
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        CharacterAlt* v;
+        {
+         v = new CharacterAlt(CharacterAltType::NormalNotIncludingClosingBracket, CS); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_alt = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction28(std::vector<StackEntry>* _grx_stack) {
+        CharacterRange* CR = _grx_stack->back().payload.character_range;
         _grx_stack->pop_back();
+        CharacterSet* CS = _grx_stack->back().payload.character_set;
         _grx_stack->pop_back();
-        return {};
+        CharacterSet* v;
+        {
+         v = CS; v->ranges.push_back(CR); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_set = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction29(std::vector<StackEntry>* _grx_stack) {
+        CharacterRange* CR = _grx_stack->back().payload.character_range;
         _grx_stack->pop_back();
-        return {};
+        CharacterSet* v;
+        {
+         v = new CharacterSet(CR); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_set = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction30(std::vector<StackEntry>* _grx_stack) {
+        CharacterClass CC = _grx_stack->back().payload.character_class;
         _grx_stack->pop_back();
+        CharacterSet* CS = _grx_stack->back().payload.character_set;
         _grx_stack->pop_back();
-        return {};
+        CharacterSet* v;
+        {
+         v = CS; v->classes.push_back(CC); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_set = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction31(std::vector<StackEntry>* _grx_stack) {
+        CharacterClass CC = _grx_stack->back().payload.character_class;
         _grx_stack->pop_back();
-        return {};
+        CharacterSet* v;
+        {
+         v = new CharacterSet(CC); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_set = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction32(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {};
+        return {._grx_object = nullptr};
     }
     static StackEntryPayload _reduction33(std::vector<StackEntry>* _grx_stack) {
+        Token C = _grx_stack->back().payload.CHARACTER;
         _grx_stack->pop_back();
-        return {};
+        CharacterRange* v;
+        {
+         char c = C.payload.front(); v = new CharacterRange(c); 
+        }
+        StackEntryPayload _grx_v;
+        _grx_v.character_range = v;
+        return _grx_v;
     }
     static StackEntryPayload _reduction34(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        return {._grx_object = nullptr};
     }
     static StackEntryPayload _reduction35(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {};
+        return {._grx_object = nullptr};
     }
     static constexpr StackEntryPayload (*reductions[])(std::vector<StackEntry>*) = {_reduction0, _reduction1, _reduction2, _reduction3, _reduction4, _reduction5, _reduction6, _reduction7, _reduction8, _reduction9, _reduction10, _reduction11, _reduction12, _reduction13, _reduction14, _reduction15, _reduction16, _reduction17, _reduction18, _reduction19, _reduction20, _reduction21, _reduction22, _reduction23, _reduction24, _reduction25, _reduction26, _reduction27, _reduction28, _reduction29, _reduction30, _reduction31, _reduction32, _reduction33, _reduction34, _reduction35};
 

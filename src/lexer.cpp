@@ -185,7 +185,7 @@ Token Lexer::lex() {
                     const std::string payload(1, peeked_char);
                     return Token(T_SPECIAL_CHARACTER, backend.head_position(), payload);
                 }
-                
+
                 default: {
                     std::stringstream ss;
                     ss << "Invalid escape sequence: '\\' cannot be followed by '" << peeked_char << "'.";
