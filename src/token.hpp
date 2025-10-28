@@ -6,10 +6,11 @@
 class Token {
 
 public:
-    int id;
-    size_t position;
-    size_t length;
+    int id = 0;
+    size_t position = 0;
 
-    explicit Token(const int id, const size_t position, const size_t length = 0) : id(id), position(position), length(length) {}
+    explicit Token(const int id, const size_t position) : id(id), position(position) {}
+
+    Token() = default;
 
 };

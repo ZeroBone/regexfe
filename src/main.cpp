@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
 
     if (argc < 3) {
         std::cerr << "Usage: " << argv[0] << " <file_name> <regex_pattern> [--dump-mim]" << std::endl;
-        return 0xdead;
+        return 1;
     }
 
     std::string file_name = argv[1];
@@ -21,14 +21,14 @@ int main(int argc, char* argv[]) {
         }
         else {
             std::cerr << "Unknown option: " << flag << "\n";
-            return 0xbeef;
+            return 2;
         }
     }
 
     std::ifstream input_file(file_name);
     if (!input_file.is_open()) {
         std::cerr << "Error: Could not open file '" << file_name << "' for reading." << std::endl;
-        return 0xcafe;
+        return 3;
     }
 
     // parse regular expression
@@ -43,16 +43,18 @@ int main(int argc, char* argv[]) {
 
     while (true) {
 
-        ZBResult<Token, LexerError> result = lexer.lex();
+        Token token;
 
-        if (result.is_error()) {
-            LexerError error = result.unwrap_error();
-
-            std::cerr << "Syntax error at position " << error.position << ": " << error.message << std::endl;
-            return 0xaffe;
+        try {
+            token = lexer.lex();
+        }
+        catch (const LexerError& e) {
+            std::cerr << e << std::endl;
+            return 4;
         }
 
-        Token token = result.unwrap();
+        std::cout << token.id << " at " << token.position << std::endl;
+
         parser.parse(token.id, Parser::StackEntryPayload{});
 
         if (token.id == T_EOF) {
@@ -62,11 +64,14 @@ int main(int argc, char* argv[]) {
     }
 
     if (!parser.successfullyParsed()) {
-        std::cerr << "Error: regular expression is invalid." << std::endl;
+        std::cerr << "Syntax error: regular expression is invalid." << std::endl;
+        return 5;
     }
 
-    std::cout << "Regex pattern: " << regex_pattern << "\n";
-    std::cout << "Dump MIM: " << (dump_mim ? "true" : "false") << "\n";
+    std::cout << "Success." << std::endl;
+
+    // std::cout << "Regex pattern: " << regex_pattern << "\n";
+    // std::cout << "Dump MIM: " << (dump_mim ? "true" : "false") << "\n";
 
     input_file.close();
 

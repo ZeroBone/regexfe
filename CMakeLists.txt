@@ -29,8 +29,7 @@ if(WIN32)
     target_compile_options(${PROJECT_NAME} PRIVATE /Wall)
 endif()
 
-
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+# target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
 # Prevent some runtime library not found issues: set RPATH to find all the libraries
 # If you still see issues, consider setting the environment variable LD_LIBRARY_PATH to include the mimir/install/lib directory

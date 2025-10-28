@@ -2,7 +2,6 @@
 
 #include <cassert>
 
-#include <limits>
 #include <sstream>
 #include <string>
 #include <utility>
@@ -50,6 +49,7 @@ public:
                 window.push(c);
                 return true;
             }
+            return false;
         }
 
         assert(peek_offset < window.size());
@@ -92,14 +92,14 @@ public:
             assert(head == 0);
             if (char c; stream.get(c)) {
                 window.push(c);
+                return true;
             }
-            else {
-                return false;
-            }
+            return false;
         }
 
         if (peek_offset >= 1) {
             assert(window.size() >= 2);
+            window.pop();
             head++;
             peek_offset--;
             return true;
@@ -117,7 +117,7 @@ public:
         assert(window.size() == 1);
 
         if (char c; stream.get(c)) {
-            std::string s(1, c);
+            const std::string s(1, c);
             window = StringQueue(s);
             head++;
             return true;
@@ -127,7 +127,7 @@ public:
     }
 };
 
-class LexerError : public std::exception {
+class LexerError final : public std::exception {
 
 public:
     const size_t position;
@@ -135,14 +135,13 @@ public:
 
     explicit LexerError(const size_t position, std::string message) : position(position), message(std::move(message)) {}
 
-    [[nodiscard]] bool is_eof_error() const {
-        return message.empty();
+    friend std::ostream& operator<<(std::ostream& stream, const LexerError& error) {
+        return stream << "Syntax error at position " << (error.position + 1) << ": " << error.message;
     }
 
-    static LexerError reachedEof(const size_t position) {
-        return LexerError(position, "");
+    [[nodiscard]] const char* what() const noexcept override {
+        return "Lexer error.";
     }
-
 };
 
 class Lexer {

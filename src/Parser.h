@@ -170,125 +170,125 @@ private:
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction1(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction2(std::vector<StackEntry>* _grx_stack) {
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction3(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction4(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction5(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction6(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction7(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction8(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction9(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction10(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction11(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction12(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction13(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction14(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction15(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction16(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction17(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction18(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction19(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction20(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction21(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction22(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction23(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction24(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction25(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction26(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction27(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
@@ -296,35 +296,35 @@ private:
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction28(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction29(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction30(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction31(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction32(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
         _grx_stack->pop_back();
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static StackEntryPayload _reduction33(std::vector<StackEntry>* _grx_stack) {
         _grx_stack->pop_back();
-        return {._grx_object = nullptr};
+        return {};
     }
     static constexpr StackEntryPayload (*reductions[])(std::vector<StackEntry>*) = {_reduction0, _reduction1, _reduction2, _reduction3, _reduction4, _reduction5, _reduction6, _reduction7, _reduction8, _reduction9, _reduction10, _reduction11, _reduction12, _reduction13, _reduction14, _reduction15, _reduction16, _reduction17, _reduction18, _reduction19, _reduction20, _reduction21, _reduction22, _reduction23, _reduction24, _reduction25, _reduction26, _reduction27, _reduction28, _reduction29, _reduction30, _reduction31, _reduction32, _reduction33};
 
