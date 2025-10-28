@@ -26,7 +26,7 @@ quantifier = QUESTION_MARK;
 match_elem = DOT;
 match_elem = character_class;
 match_elem = character_alt;
-match_elem = LITERAL;
+match_elem = literal;
 
 character_class = WORD_CHARS;
 character_class = NON_WORD_CHARS;
@@ -47,3 +47,6 @@ character_set = character_class;
 
 character_range = CHARACTER MINUS CHARACTER;
 character_range = CHARACTER;
+
+literal = CHARACTER;
+literal = SPECIAL_CHARACTER;

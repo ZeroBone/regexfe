@@ -158,6 +158,25 @@ Token Lexer::lex() {
                     backend.move_head_to_peek();
                     return Token(T_NON_WHITESPACE_CHARS, backend.head_position());
                 }
+                case 't': {
+                    backend.move_head_to_peek();
+                    return Token(T_SPECIAL_CHARACTER, backend.head_position(), "\t");
+                }
+                case '.':
+                case '*':
+                case '+':
+                case '?':
+                case '(':
+                case ')':
+                case '[':
+                case ']':
+                case '|':
+                case '^':
+                case '\\': {
+                    backend.move_head_to_peek();
+                    const std::string payload(1, peeked_char);
+                    return Token(T_SPECIAL_CHARACTER, backend.head_position(), payload);
+                }
                 default: {
                     std::stringstream ss;
                     ss << "Invalid escape sequence: '\\' cannot be followed by '" << peeked_char << "'.";
