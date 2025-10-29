@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
             return 4;
         }
 
-        std::cout << token.id << " at " << token.position << std::endl;
+        // std::cout << token.id << " at " << token.position << std::endl;
 
         Parser::StackEntryPayload payload;
 
@@ -76,6 +76,8 @@ int main(int argc, char* argv[]) {
         std::cerr << "Syntax error: regular expression is invalid." << std::endl;
         return 5;
     }
+
+    Expression* expression = parser.getValue().expression;
 
     std::cout << "Success." << std::endl;
 

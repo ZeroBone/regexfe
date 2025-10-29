@@ -11,15 +11,15 @@
 %type SPECIAL_CHARACTER char
 
 %type expression {Expression*}
-expression = expression(E) OR conjunction(C); { v = E; v->children.push_back(C); }
+expression = expression(E) OR conjunction(C); { v = E; v->add_child(C); }
 expression = conjunction(C); { v = new Expression(C); }
 // empty conjunction
 expression = ;  { v = new Expression(); }
 
 %type conjunction {Conjunction*}
-conjunction = conjunction(C) group(G); { v = C; v->children.push_back(G); }
+conjunction = conjunction(C) group(G); { v = C; v->add_child(G); }
 conjunction = group(G); { v = new Conjunction(G); }
-conjunction = conjunction(C) match(M); { v = C; v->children.push_back(M); }
+conjunction = conjunction(C) match(M); { v = C; v->add_child(M); }
 conjunction = match(M); { v = new Conjunction(M); }
 
 %type group {Group*}
@@ -57,9 +57,9 @@ character_alt = LEFT_BRACKET RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v 
 character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NormalNotIncludingClosingBracket, CS); }
 
 %type character_set {CharacterSet*}
-character_set = character_set(CS) character_range(CR); { v = CS; v->ranges.push_back(CR); }
+character_set = character_set(CS) character_range(CR); { v = CS; v->add_range(CR); }
 character_set = character_range(CR); { v = new CharacterSet(CR); }
-character_set = character_set(CS) character_class(CC); { v = CS; v->classes.push_back(CC); }
+character_set = character_set(CS) character_class(CC); { v = CS; v->add_character_class(CC); }
 character_set = character_class(CC); { v = new CharacterSet(CC); }
 
 %type character_range {CharacterRange*}

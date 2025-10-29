@@ -194,7 +194,7 @@ private:
         _grx_stack->pop_back();
         Expression* v;
         {
-         v = E; v->children.push_back(C); 
+         v = E; v->add_child(C); 
         }
         StackEntryPayload _grx_v;
         _grx_v.expression = v;
@@ -227,7 +227,7 @@ private:
         _grx_stack->pop_back();
         Conjunction* v;
         {
-         v = C; v->children.push_back(G); 
+         v = C; v->add_child(G); 
         }
         StackEntryPayload _grx_v;
         _grx_v.conjunction = v;
@@ -251,7 +251,7 @@ private:
         _grx_stack->pop_back();
         Conjunction* v;
         {
-         v = C; v->children.push_back(M); 
+         v = C; v->add_child(M); 
         }
         StackEntryPayload _grx_v;
         _grx_v.conjunction = v;
@@ -514,7 +514,7 @@ private:
         _grx_stack->pop_back();
         CharacterSet* v;
         {
-         v = CS; v->ranges.push_back(CR); 
+         v = CS; v->add_range(CR); 
         }
         StackEntryPayload _grx_v;
         _grx_v.character_set = v;
@@ -538,7 +538,7 @@ private:
         _grx_stack->pop_back();
         CharacterSet* v;
         {
-         v = CS; v->classes.push_back(CC); 
+         v = CS; v->add_character_class(CC); 
         }
         StackEntryPayload _grx_v;
         _grx_v.character_set = v;
