@@ -3,6 +3,7 @@
 
 #include "Parser.h"
 #include "lexer.hpp"
+#include "ast.hpp"
 #include "mimir.hpp"
 #include "mimir_codegen.hpp"
 
