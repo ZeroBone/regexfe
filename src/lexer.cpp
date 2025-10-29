@@ -129,7 +129,7 @@ Token Lexer::lex() {
 
         case '\\': {
             if (!backend.peek()) {
-                throw LexerError(backend.head_position(), "Invalid start of lexeme: '\\'.");
+                throw LexerError(backend.head_position(), "invalid start of lexeme: '\\'.");
             }
             // ReSharper disable once CppTooWideScope
             const char peeked_char = backend.char_at_peek();
@@ -188,7 +188,7 @@ Token Lexer::lex() {
 
                 default: {
                     std::stringstream ss;
-                    ss << "Invalid escape sequence: '\\' cannot be followed by '" << peeked_char << "'.";
+                    ss << "invalid escape sequence: '\\' cannot be followed by '" << peeked_char << "'.";
                     throw LexerError(backend.head_position(), ss.str());
                 }
             }
@@ -202,7 +202,7 @@ Token Lexer::lex() {
             }
 
             std::stringstream ss;
-            ss << "Unexpected character '" << head_char << "'.";
+            ss << "unexpected character '" << head_char << "'.";
             throw LexerError(backend.head_position(), ss.str());
         }
 

@@ -27,16 +27,11 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    std::ifstream input_file(file_name);
-    if (!input_file.is_open()) {
-        std::cerr << "Error: Could not open file '" << file_name << "' for reading." << std::endl;
-        return 3;
-    }
-
     // parse regular expression
 
     Lexer lexer(regex_pattern);
     Parser parser;
+    size_t last_token_position = 0;
 
     while (true) {
 
@@ -50,7 +45,7 @@ int main(int argc, char* argv[]) {
             return 4;
         }
 
-        // std::cout << token.id << " at " << token.position << std::endl;
+        last_token_position = token.position;
 
         Parser::StackEntryPayload payload;
 
@@ -75,36 +70,33 @@ int main(int argc, char* argv[]) {
     }
 
     if (!parser.successfullyParsed()) {
-        std::cerr << "Syntax error: regular expression is invalid." << std::endl;
+        std::cerr << (last_token_position + 1) << ": error: parsing error: invalid syntax." << std::endl;
         return 5;
     }
 
     Expression* expression = parser.getValue().expression;
-
-    /*mim::Driver driver;
-    driver.load("compile");
-    driver.load("mem");
-    driver.load("core");
-    driver.load("opt");
-    driver.load("regex");
-    driver.load("direct");
-
-    mim::World& world = driver.world();
-
-    auto l = world.lit_i8('a');
-    auto v = world.call<mim::plug::regex::lit>(mim::plug::regex::cls::MimChar());*/
-
     MimirCodeGen code_gen;
 
-    auto regex = expression->generateMimIR(code_gen);
+    MimRegex regex = expression->generateMimIR(code_gen);
 
     if (dump_mim) {
         std::cout << regex;
         return 0;
     }
 
-    // std::cout << "Regex pattern: " << regex_pattern << "\n";
-    // std::cout << "Dump MIM: " << (dump_mim ? "true" : "false") << "\n";
+    std::ifstream input_file(file_name);
+    if (!input_file.is_open()) {
+        std::cerr << "Error: Could not open file '" << file_name << "' for reading." << std::endl;
+        return 3;
+    }
+
+    std::function<bool(const char*)> matcher = code_gen.make_matcher(regex);
+
+    std::string line;
+    while (std::getline(input_file, line)) {
+        bool matched = matcher(line.c_str());
+        std::cout << line << "," << (matched ? "true" : "false") << std::endl;
+    }
 
     input_file.close();
 

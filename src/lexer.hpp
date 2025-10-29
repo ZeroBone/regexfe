@@ -70,7 +70,7 @@ public:
     explicit LexerError(const size_t position, std::string message) : position(position), message(std::move(message)) {}
 
     friend std::ostream& operator<<(std::ostream& stream, const LexerError& error) {
-        return stream << "Syntax error at position " << (error.position + 1) << ": " << error.message;
+        return stream << (error.position + 1) << ": error: lexing error: " << error.message;
     }
 
     [[nodiscard]] const char* what() const noexcept override {
