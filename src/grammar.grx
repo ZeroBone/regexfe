@@ -54,7 +54,7 @@ character_class = NON_WHITESPACE_CHARS; { v = CharacterClass::NonWhiteSpaceChars
 character_alt = LEFT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::Normal, CS); }
 character_alt = LEFT_BRACKET UP_ARROW character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::Negated, CS); }
 character_alt = LEFT_BRACKET RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NormalIncludingClosingBracket, CS); }
-character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NormalNotIncludingClosingBracket, CS); }
+character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NegatedIncludingClosingBracket, CS); }
 
 %type character_set {CharacterSet*}
 character_set = character_set(CS) character_range(CR); { v = CS; v->add_range(CR); }

@@ -501,7 +501,7 @@ private:
         _grx_stack->pop_back();
         CharacterAlt* v;
         {
-         v = new CharacterAlt(CharacterAltType::NormalNotIncludingClosingBracket, CS); 
+         v = new CharacterAlt(CharacterAltType::NegatedIncludingClosingBracket, CS); 
         }
         StackEntryPayload _grx_v;
         _grx_v.character_alt = v;

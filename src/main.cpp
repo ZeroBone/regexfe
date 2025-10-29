@@ -3,6 +3,8 @@
 
 #include "Parser.h"
 #include "lexer.hpp"
+#include "mimir.hpp"
+#include "mimir_codegen.hpp"
 
 int main(int argc, char* argv[]) {
 
@@ -79,7 +81,27 @@ int main(int argc, char* argv[]) {
 
     Expression* expression = parser.getValue().expression;
 
-    std::cout << "Success." << std::endl;
+    /*mim::Driver driver;
+    driver.load("compile");
+    driver.load("mem");
+    driver.load("core");
+    driver.load("opt");
+    driver.load("regex");
+    driver.load("direct");
+
+    mim::World& world = driver.world();
+
+    auto l = world.lit_i8('a');
+    auto v = world.call<mim::plug::regex::lit>(mim::plug::regex::cls::MimChar());*/
+
+    MimirCodeGen code_gen;
+
+    auto regex = expression->generateMimIR(code_gen);
+
+    if (dump_mim) {
+        std::cout << regex;
+        return 0;
+    }
 
     // std::cout << "Regex pattern: " << regex_pattern << "\n";
     // std::cout << "Dump MIM: " << (dump_mim ? "true" : "false") << "\n";

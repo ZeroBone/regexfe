@@ -44,3 +44,4 @@
 *.jar
 src/Parser_debug.txt
 mimir
+!src/mimir

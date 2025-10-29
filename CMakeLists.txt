@@ -20,7 +20,10 @@ add_executable(${PROJECT_NAME} src/Parser.h src/main.cpp
         src/lexer.cpp
         src/strqueue.hpp
         src/mimir.hpp
-        src/ast.hpp)
+        src/ast.hpp
+        src/mimir_codegen.hpp
+        src/mimir_codegen.cpp
+        src/ast.cpp)
 
 
 if(NOT MSVC)
