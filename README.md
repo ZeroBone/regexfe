@@ -1,7 +1,8 @@
 # regexfe
-Regular expression parser
 
-# Installation
+A simple regular expression matcher for text files.
+
+## Installation
 
 Download the jar file of the form `grammax-x.x.x.jar` from the [Grammax releases page](https://github.com/ZeroBone/Grammax/releases).
 
@@ -27,7 +28,7 @@ cmake --build ./build
 ```
 For recompilation only the last command suffices.
 
-# Usage
+## Usage
 
 The name of the produced binary is `regexfe`. It can be used to match every line of a given text file against a regular expression.
 For example,

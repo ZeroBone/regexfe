@@ -16,7 +16,9 @@ MimRegex Conjunction::generateMimIR(MimirCodeGen& code_gen) const {
 
 MimRegex Expression::generateMimIR(MimirCodeGen& code_gen) const {
 
-    assert(!children.empty());
+    if (children.empty()) {
+        return code_gen.regex_empty();
+    }
 
     std::vector<MimRegex> regexes;
     for (const Conjunction* conj : children) {
