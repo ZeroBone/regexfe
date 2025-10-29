@@ -1,5 +1,32 @@
 #include "ast.hpp"
 
+MimRegex Conjunction::generateMimIR(MimirCodeGen& code_gen) const {
+
+    assert(!children.empty());
+
+    std::vector<MimRegex> children_regexes;
+
+    for (const GroupOrMatch* child : children) {
+        children_regexes.push_back(child->generateMimIR(code_gen));
+    }
+
+    return code_gen.regex_conj(children_regexes);
+
+}
+
+MimRegex Expression::generateMimIR(MimirCodeGen& code_gen) const {
+
+    assert(!children.empty());
+
+    std::vector<MimRegex> regexes;
+    for (const Conjunction* conj : children) {
+        regexes.push_back(conj->generateMimIR(code_gen));
+    }
+
+    return code_gen.regex_disj(regexes);
+
+}
+
 MimRegex characterClassToRegex(MimirCodeGen& code_gen, const CharacterClass cls) {
     switch (cls) {
         case CharacterClass::WordChars:
@@ -51,4 +78,53 @@ MimRegex CharacterSet::generateMimIR(MimirCodeGen& code_gen, const bool as_negat
 
 MimRegex CharacterClassMatchElement::generateMimIR(MimirCodeGen& code_gen) const {
     return characterClassToRegex(code_gen, char_class);
+}
+
+MimRegex CharacterAlt::generateMimIR(MimirCodeGen& code_gen) const {
+
+    const bool negated_conjunction_mode = type == CharacterAltType::Negated || type == CharacterAltType::NegatedIncludingClosingBracket;
+    const bool include_closing_bracket = type == CharacterAltType::NormalIncludingClosingBracket || type == CharacterAltType::NegatedIncludingClosingBracket;
+
+    MimRegex result = set->generateMimIR(code_gen, negated_conjunction_mode);
+
+    if (include_closing_bracket) {
+        const MimRegex closing_bracket = code_gen.regex_lit(']');
+
+        std::vector<MimRegex> regexes;
+        regexes.push_back(result);
+
+        if (negated_conjunction_mode) {
+            regexes.push_back(code_gen.regex_not(closing_bracket));
+            result = code_gen.regex_conj(regexes);
+        }
+        else {
+            regexes.push_back(closing_bracket);
+            result = code_gen.regex_disj(regexes);
+        }
+
+    }
+
+    return result;
+
+}
+
+MimRegex MatchNode::generateMimIR(MimirCodeGen& code_gen) const {
+
+    const MimRegex elementRegex = element->generateMimIR(code_gen);
+
+    if (quantifier == nullptr) {
+        return elementRegex;
+    }
+
+    switch (*quantifier) {
+        case Quantifier::Star:
+            return code_gen.regex_star(elementRegex);
+        case Quantifier::Plus:
+            return code_gen.regex_plus(elementRegex);
+        case Quantifier::QuestionMark:
+            return code_gen.regex_optional(elementRegex);
+        default:
+            assert(false);
+    }
+
 }
