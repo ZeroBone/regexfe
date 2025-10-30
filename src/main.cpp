@@ -10,12 +10,12 @@
 int main(int argc, char* argv[]) {
 
     if (argc < 3) {
-        std::cerr << "Usage: " << argv[0] << " <file_name> <regex_pattern> [--dump-mim]" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " <regex_pattern> <file_name> [--dump-mim]" << std::endl;
         return 1;
     }
 
-    std::string file_name = argv[1];
-    std::string regex_pattern = argv[2];
+    std::string regex_pattern = argv[1];
+    std::string file_name = argv[2];
 
     bool dump_mim = false;
     if (argc == 4) {

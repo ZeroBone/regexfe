@@ -33,6 +33,6 @@ For recompilation only the last command suffices.
 The name of the produced binary is `regexfe`. It can be used to match every line of a given text file against a regular expression.
 For example,
 ```bash
-./build/regexfe LICENSE "[^a-z].*"
+./build/regexfe "[^a-z].*" LICENSE
 ```
 returns true for all lines that start with a non-capital English letter, and false otherwise.
