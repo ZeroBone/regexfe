@@ -58,13 +58,29 @@ character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set(CS) RIGHT_BRAC
 
 %type character_set {CharacterSet*}
 character_set = character_set(CS) character_range(CR); { v = CS; v->add_range(CR); }
+character_set = character_set(CS) UP_ARROW; { v = CS; v->add_range(new CharacterRange('^')); }
 character_set = character_range(CR); { v = new CharacterSet(CR); }
 character_set = character_set(CS) character_class(CC); { v = CS; v->add_character_class(CC); }
 character_set = character_class(CC); { v = new CharacterSet(CC); }
 
 %type character_range {CharacterRange*}
-character_range = CHARACTER(LB) MINUS CHARACTER(UB); { v = new CharacterRange(LB, UB); }
-character_range = CHARACTER(C); { v = new CharacterRange(C); }
+character_range = character_set_char(LB) MINUS character_set_char(UB); { v = new CharacterRange(LB, UB); }
+character_range = character_set_char(C); { v = new CharacterRange(C); }
+
+%type character_set_char {char}
+character_set_char = CHARACTER(C); { v = C; }
+character_set_char = SPECIAL_CHARACTER(SC); { v = SC; }
+character_set_char = OR; { v = '|'; }
+character_set_char = LEFT_BRACKET; { v = '['; }
+character_set_char = DOT; { v = '.'; }
+// character_set_char = UP_ARROW; { v = '^'; }
+// character_set_char = MINUS; { v = '-'; }
+character_set_char = PLUS; { v = '+'; }
+character_set_char = LEFT_PARENTHESIS; { v = '('; }
+character_set_char = RIGHT_PARENTHESIS; { v = ')'; }
+character_set_char = QUESTION_MARK; { v = '?'; }
+character_set_char = STAR; { v = '*'; }
+
 
 %type literal {char}
 literal = CHARACTER(C); { v = C; }

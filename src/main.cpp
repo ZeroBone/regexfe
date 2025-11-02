@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
         }
         else {
             std::cerr << "Unknown option: " << flag << "\n";
-            return 2;
+            return 1;
         }
     }
 
@@ -43,7 +43,7 @@ int main(int argc, char* argv[]) {
         }
         catch (const LexerError& e) {
             std::cerr << e << std::endl;
-            return 4;
+            return 1;
         }
 
         last_token_position = token.position;
@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 
     if (!parser.successfullyParsed()) {
         std::cerr << (last_token_position + 1) << ": error: parsing error: invalid syntax." << std::endl;
-        return 5;
+        return 1;
     }
 
     Expression* expression = parser.getValue().expression;
@@ -88,7 +88,7 @@ int main(int argc, char* argv[]) {
     std::ifstream input_file(file_name);
     if (!input_file.is_open()) {
         std::cerr << "Error: Could not open file '" << file_name << "' for reading." << std::endl;
-        return 3;
+        return 1;
     }
 
     std::function<bool(const char*)> matcher = code_gen.make_matcher(regex);

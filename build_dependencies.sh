@@ -1,3 +1,6 @@
+# This code was provided to Alexander Mayorov by the Compiler Construction Team at the Saarland University
+# Alexander Mayorov is not the author of the code in this file, nor is this file covered by the LICENSE.
+
 #!/usr/bin/env bash
 set -eu
 
