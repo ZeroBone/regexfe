@@ -55,6 +55,8 @@ character_alt = LEFT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new Characte
 character_alt = LEFT_BRACKET UP_ARROW character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::Negated, CS); }
 character_alt = LEFT_BRACKET RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NormalIncludingClosingBracket, CS); }
 character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET character_set(CS) RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NegatedIncludingClosingBracket, CS); }
+character_alt = LEFT_BRACKET RIGHT_BRACKET RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NormalIncludingClosingBracket, nullptr); }
+character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NegatedIncludingClosingBracket, nullptr); }
 
 %type character_set {CharacterSet*}
 character_set = character_set(CS) character_range(CR); { v = CS; v->add_range(CR); }
@@ -67,14 +69,12 @@ character_set = character_class(CC); { v = new CharacterSet(CC); }
 character_range = character_set_char(LB) MINUS character_set_char(UB); { v = new CharacterRange(LB, UB); }
 character_range = character_set_char(C); { v = new CharacterRange(C); }
 
-%type character_set_char {char}
+%type character_set_char {char} // we don't allow ^ and - here
 character_set_char = CHARACTER(C); { v = C; }
 character_set_char = SPECIAL_CHARACTER(SC); { v = SC; }
 character_set_char = OR; { v = '|'; }
 character_set_char = LEFT_BRACKET; { v = '['; }
 character_set_char = DOT; { v = '.'; }
-// character_set_char = UP_ARROW; { v = '^'; }
-// character_set_char = MINUS; { v = '-'; }
 character_set_char = PLUS; { v = '+'; }
 character_set_char = LEFT_PARENTHESIS; { v = '('; }
 character_set_char = RIGHT_PARENTHESIS; { v = ')'; }

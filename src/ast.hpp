@@ -119,7 +119,7 @@ public:
         classes.push_back(cls);
     }
 
-    MimRegex generateMimIR(MimirCodeGen& code_gen, bool as_negated_conjunction) const;
+    MimRegex generateMimIR(MimirCodeGen& code_gen, bool negate, bool addClosingBracket) const;
 
 };
 
@@ -194,9 +194,9 @@ class MatchNode final : public GroupOrMatch {
     const Quantifier* const quantifier;
 
 public:
-    explicit MatchNode(MatchElement* el): element(el), quantifier(nullptr) {}
+    explicit MatchNode(const MatchElement* el): element(el), quantifier(nullptr) {}
 
-    explicit MatchNode(MatchElement* el, const Quantifier quantifier): element(el), quantifier(new Quantifier(quantifier)) {}
+    explicit MatchNode(const MatchElement* el, const Quantifier quantifier): element(el), quantifier(new Quantifier(quantifier)) {}
 
     MimRegex generateMimIR(MimirCodeGen& code_gen) const override;
 

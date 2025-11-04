@@ -127,9 +127,6 @@ Token Lexer::lex() {
         case '^':
             return Token(T_UP_ARROW, backend.head_position());
 
-        case '\t':
-            return Token(T_SPECIAL_CHARACTER, backend.head_position(), "\t");
-
         case '\\': {
             if (!backend.peek()) {
                 throw LexerError(backend.head_position(), "invalid start of lexeme: '\\'.");
@@ -176,6 +173,7 @@ Token Lexer::lex() {
                 case '.':
                 case '*':
                 case '+':
+                case '-':
                 case '?':
                 case '(':
                 case ')':

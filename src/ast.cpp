@@ -48,33 +48,26 @@ MimRegex characterClassToRegex(MimirCodeGen& code_gen, const CharacterClass cls)
     }
 }
 
-MimRegex CharacterSet::generateMimIR(MimirCodeGen& code_gen, const bool as_negated_conjunction) const {
+MimRegex CharacterSet::generateMimIR(MimirCodeGen& code_gen, const bool negate, const bool addClosingBracket) const {
 
     std::vector<MimRegex> regexes;
 
     for (const CharacterRange* range : ranges) {
-        MimRegex range_regex = range->generateMimIR(code_gen);
-        if (as_negated_conjunction) {
-            range_regex = code_gen.regex_not(range_regex);
-        }
-        regexes.push_back(range_regex);
+        regexes.push_back(range->generateMimIR(code_gen));
+    }
+
+    if (addClosingBracket) {
+        regexes.push_back(code_gen.regex_lit(']'));
     }
 
     for (const CharacterClass cls : classes) {
-        MimRegex class_regex = characterClassToRegex(code_gen, cls);
-        if (as_negated_conjunction) {
-            class_regex = code_gen.regex_not(class_regex);
-        }
-        regexes.push_back(class_regex);
+        regexes.push_back(characterClassToRegex(code_gen, cls));
     }
 
     assert(!regexes.empty());
 
-    if (as_negated_conjunction) {
-        return code_gen.regex_conj(regexes);
-    }
-
-    return code_gen.regex_disj(regexes);
+    const MimRegex result = code_gen.regex_disj(regexes);
+    return negate ? code_gen.regex_not(result) : result;
 
 }
 
@@ -84,29 +77,14 @@ MimRegex CharacterClassMatchElement::generateMimIR(MimirCodeGen& code_gen) const
 
 MimRegex CharacterAlt::generateMimIR(MimirCodeGen& code_gen) const {
 
-    const bool negated_conjunction_mode = type == CharacterAltType::Negated || type == CharacterAltType::NegatedIncludingClosingBracket;
-    const bool include_closing_bracket = type == CharacterAltType::NormalIncludingClosingBracket || type == CharacterAltType::NegatedIncludingClosingBracket;
-
-    MimRegex result = set->generateMimIR(code_gen, negated_conjunction_mode);
-
-    if (include_closing_bracket) {
-        const MimRegex closing_bracket = code_gen.regex_lit(']');
-
-        std::vector<MimRegex> regexes;
-        regexes.push_back(result);
-
-        if (negated_conjunction_mode) {
-            regexes.push_back(code_gen.regex_not(closing_bracket));
-            result = code_gen.regex_conj(regexes);
-        }
-        else {
-            regexes.push_back(closing_bracket);
-            result = code_gen.regex_disj(regexes);
-        }
-
+    if (set == nullptr) {
+        return code_gen.regex_empty();
     }
 
-    return result;
+    const bool negated_mode = type == CharacterAltType::Negated || type == CharacterAltType::NegatedIncludingClosingBracket;
+    const bool include_closing_bracket = type == CharacterAltType::NormalIncludingClosingBracket || type == CharacterAltType::NegatedIncludingClosingBracket;
+
+    return set->generateMimIR(code_gen, negated_mode, include_closing_bracket);
 
 }
 
