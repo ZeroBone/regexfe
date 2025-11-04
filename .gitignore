@@ -41,6 +41,7 @@
 *.dwo
 
 *.jar
+.idea
 src/Parser_debug.txt
 mimir
 !src/mimir
