@@ -17,8 +17,6 @@ expression = conjunction(C); { v = new Expression(C); }
 expression = ;  { v = new Expression(); }
 
 %type conjunction {Conjunction*}
-conjunction = conjunction(C) group(G); { v = C; v->add_child(G); }
-conjunction = group(G); { v = new Conjunction(G); }
 conjunction = conjunction(C) match(M); { v = C; v->add_child(M); }
 conjunction = match(M); { v = new Conjunction(M); }
 
@@ -27,9 +25,9 @@ group = LEFT_PARENTHESIS expression(E) RIGHT_PARENTHESIS; { v = new Group(false,
 // non-capturing group
 group = LEFT_PARENTHESIS_QUESTION_MARK_COLON expression(E) RIGHT_PARENTHESIS; { v = new Group(true, E); }
 
-%type match {MatchNode*}
-match = match_elem(ME) quantifier(Q); { v = new MatchNode(ME, Q); }
-match = match_elem(ME); { v = new MatchNode(ME); }
+%type match {Match*}
+match = match_elem(ME) quantifier(Q); { v = new Match(ME, Q); }
+match = match_elem(ME); { v = new Match(ME); }
 
 %type quantifier Quantifier
 quantifier = STAR; { v = Quantifier::Star; }
@@ -41,6 +39,7 @@ match_elem = DOT; { v = new DotMatchElement(); }
 match_elem = character_class(CC); { v = new CharacterClassMatchElement(CC); }
 match_elem = character_alt(CA); { v = new CharacterAltMatchElement(CA); }
 match_elem = literal(L); { v = new LiteralMatchElement(L); }
+match_elem = group(G); { v = new GroupMatchElement(G); }
 
 %type character_class {CharacterClass}
 character_class = WORD_CHARS; { v = CharacterClass::WordChars; }

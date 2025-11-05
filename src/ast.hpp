@@ -8,21 +8,41 @@ public:
     virtual ~AstNode() = default;
 };
 
-class GroupOrMatch : public AstNode {
+enum class Quantifier {
+    Star,
+    Plus,
+    QuestionMark
+};
+
+class MatchElement : public AstNode {
 
 public:
     virtual MimRegex generateMimIR(MimirCodeGen& code_gen) const = 0;
 
 };
 
-class Conjunction final : public AstNode {
-    std::vector<GroupOrMatch*> children;
+class Match final : public AstNode {
+
+    const MatchElement* const element;
+    const Quantifier* const quantifier;
+
 public:
-    explicit Conjunction(GroupOrMatch* el) {
+    explicit Match(const MatchElement* el): element(el), quantifier(nullptr) {}
+
+    explicit Match(const MatchElement* el, const Quantifier quantifier): element(el), quantifier(new Quantifier(quantifier)) {}
+
+    MimRegex generateMimIR(MimirCodeGen& code_gen) const;
+
+};
+
+class Conjunction final : public AstNode {
+    std::vector<Match*> children;
+public:
+    explicit Conjunction(Match* el) {
         children.push_back(el);
     }
 
-    void add_child(GroupOrMatch* el) {
+    void add_child(Match* el) {
         children.push_back(el);
     }
 
@@ -46,7 +66,7 @@ public:
 
 };
 
-class Group final : public GroupOrMatch {
+class Group final : public AstNode {
 
     const bool is_noncapturing;
     const Expression* const expression;
@@ -54,17 +74,11 @@ class Group final : public GroupOrMatch {
 public:
     explicit Group(const bool is_noncapturing, const Expression* expression): is_noncapturing(is_noncapturing), expression(expression) {}
 
-    MimRegex generateMimIR(MimirCodeGen& code_gen) const override {
+    MimRegex generateMimIR(MimirCodeGen& code_gen) const {
         // TODO: here we drop the information about whether the group is capturing or not, think about how to pass it into MimIR
         return expression->generateMimIR(code_gen);
     }
 
-};
-
-enum class Quantifier {
-    Star,
-    Plus,
-    QuestionMark
 };
 
 enum class CharacterClass {
@@ -135,13 +149,6 @@ public:
 
 };
 
-class MatchElement : public AstNode {
-
-public:
-    virtual MimRegex generateMimIR(MimirCodeGen& code_gen) const = 0;
-
-};
-
 class DotMatchElement final : public MatchElement {
 
 public:
@@ -188,16 +195,15 @@ public:
 
 };
 
-class MatchNode final : public GroupOrMatch {
+class GroupMatchElement final : public MatchElement {
 
-    const MatchElement* const element;
-    const Quantifier* const quantifier;
+    const Group* const group;
 
 public:
-    explicit MatchNode(const MatchElement* el): element(el), quantifier(nullptr) {}
+    explicit GroupMatchElement(const Group* group) : group(group) {}
 
-    explicit MatchNode(const MatchElement* el, const Quantifier quantifier): element(el), quantifier(new Quantifier(quantifier)) {}
-
-    MimRegex generateMimIR(MimirCodeGen& code_gen) const override;
+    MimRegex generateMimIR(MimirCodeGen& code_gen) const override {
+        return group->generateMimIR(code_gen);
+    }
 
 };

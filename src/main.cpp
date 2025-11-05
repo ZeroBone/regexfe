@@ -46,6 +46,8 @@ int main(int argc, char* argv[]) {
             return 1;
         }
 
+        // std::cout << token.id << std::endl;
+
         last_token_position = token.position;
 
         Parser::StackEntryPayload payload;

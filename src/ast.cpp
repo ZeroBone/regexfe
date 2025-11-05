@@ -4,9 +4,13 @@ MimRegex Conjunction::generateMimIR(MimirCodeGen& code_gen) const {
 
     assert(!children.empty());
 
+    if (children.size() == 1) {
+        return children[0]->generateMimIR(code_gen);
+    }
+
     std::vector<MimRegex> children_regexes;
 
-    for (const GroupOrMatch* child : children) {
+    for (const Match* child : children) {
         children_regexes.push_back(child->generateMimIR(code_gen));
     }
 
@@ -18,6 +22,10 @@ MimRegex Expression::generateMimIR(MimirCodeGen& code_gen) const {
 
     if (children.empty()) {
         return code_gen.regex_empty();
+    }
+
+    if (children.size() == 1) {
+        return children[0]->generateMimIR(code_gen);
     }
 
     std::vector<MimRegex> regexes;
@@ -52,12 +60,12 @@ MimRegex CharacterSet::generateMimIR(MimirCodeGen& code_gen, const bool negate, 
 
     std::vector<MimRegex> regexes;
 
-    for (const CharacterRange* range : ranges) {
-        regexes.push_back(range->generateMimIR(code_gen));
-    }
-
     if (addClosingBracket) {
         regexes.push_back(code_gen.regex_lit(']'));
+    }
+
+    for (const CharacterRange* range : ranges) {
+        regexes.push_back(range->generateMimIR(code_gen));
     }
 
     for (const CharacterClass cls : classes) {
@@ -78,7 +86,14 @@ MimRegex CharacterClassMatchElement::generateMimIR(MimirCodeGen& code_gen) const
 MimRegex CharacterAlt::generateMimIR(MimirCodeGen& code_gen) const {
 
     if (set == nullptr) {
-        return code_gen.regex_empty();
+        switch (type) {
+            case CharacterAltType::NormalIncludingClosingBracket:
+                return code_gen.regex_lit(']');
+            case CharacterAltType::NegatedIncludingClosingBracket:
+                return code_gen.regex_not(code_gen.regex_lit(']'));
+            default:
+                assert(false);
+        }
     }
 
     const bool negated_mode = type == CharacterAltType::Negated || type == CharacterAltType::NegatedIncludingClosingBracket;
@@ -88,7 +103,7 @@ MimRegex CharacterAlt::generateMimIR(MimirCodeGen& code_gen) const {
 
 }
 
-MimRegex MatchNode::generateMimIR(MimirCodeGen& code_gen) const {
+MimRegex Match::generateMimIR(MimirCodeGen& code_gen) const {
 
     const MimRegex elementRegex = element->generateMimIR(code_gen);
 
