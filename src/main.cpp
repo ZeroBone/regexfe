@@ -11,7 +11,7 @@ int main(int argc, char* argv[]) {
 
     if (argc < 3) {
         std::cerr << "Usage: " << argv[0] << " <regex_pattern> <file_name> [--dump-mim]" << std::endl;
-        return 1;
+        return 2;
     }
 
     std::string regex_pattern = argv[1];
@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
         }
         else {
             std::cerr << "Unknown option: " << flag << "\n";
-            return 1;
+            return 2;
         }
     }
 
@@ -83,14 +83,14 @@ int main(int argc, char* argv[]) {
     MimRegex regex = expression->generateMimIR(code_gen);
 
     if (dump_mim) {
-        std::cout << regex;
+        std::cout << regex << std::endl;
         return 0;
     }
 
     std::ifstream input_file(file_name);
     if (!input_file.is_open()) {
-        std::cerr << "Error: Could not open file '" << file_name << "' for reading." << std::endl;
-        return 1;
+        std::cerr << "0: error: could not open file '" << file_name << "' for reading." << std::endl;
+        return 2;
     }
 
     std::function<bool(const char*)> matcher = code_gen.make_matcher(regex);
