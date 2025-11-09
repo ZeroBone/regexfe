@@ -59,6 +59,8 @@ character_alt = LEFT_BRACKET RIGHT_BRACKET RIGHT_BRACKET; { v = new CharacterAlt
 character_alt = LEFT_BRACKET UP_ARROW RIGHT_BRACKET RIGHT_BRACKET; { v = new CharacterAlt(CharacterAltType::NegatedIncludingClosingBracket, nullptr); }
 
 %type character_set {CharacterSet*}
+character_set = MINUS; { v = new CharacterSet(new CharacterRange('-')); }
+character_set = MINUS MINUS character_set_char(UB); { v = new CharacterSet(new CharacterRange('-', UB)); }
 character_set = character_set(CS) character_range(CR); { v = CS; v->add_range(CR); }
 character_set = character_set(CS) UP_ARROW; { v = CS; v->add_range(new CharacterRange('^')); }
 character_set = character_range(CR); { v = new CharacterSet(CR); }

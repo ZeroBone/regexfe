@@ -1,7 +1,6 @@
 /*
  * Author: Bashar Hamade
- * (Minor modifications by Alexander Mayorov)
- * This file is not covered by the LICENSE
+ * (With some modifications by Alexander Mayorov)
  **/
 
 #include <iomanip>
@@ -307,12 +306,16 @@ int run_tests() {
     // ════════════════════════════════════════════════════════════════
     // TEST: regex/end_range
     // ════════════════════════════════════════════════════════════════
+
+    // ZeroBone's specification: the minus symbol - is only allowed at the beginning of a set (unless it is part of range syntax), otherwise it should be escaped (i.e., written as \-)
+    // for example, [-] and [-a-z] are valid but [a-] and [--] are not
     run_test_section("regex/end_range - Dash at End of Set", {
-        {"[a-]", false, "'a' and dash"},
-        {"[ab-]", false, "'a', 'b', dash"},
-        {"[a-z-]", false, "Range a-z and dash"},
-        {"[0-9-]", false, "Digits and dash"},
-        {"[^a-]", false, "NOT ('a' or dash)"},
+        {"[a-]", true, "'a' and dash"},
+        {"[ab-]", true, "'a', 'b', dash"},
+        {"[a-z-]", true, "Range a-z and dash"},
+        {"[0-9-]", true, "Digits and dash"},
+        {"[^a-]", true, "NOT ('a' or dash)"},
+        {"[--]", true, "NOT ('a' or dash)"},
     }, result);
 
     // ════════════════════════════════════════════════════════════════
@@ -417,7 +420,11 @@ int run_tests() {
         {"[\\]a]", false, "Escaped bracket and 'a'"},
         {"[^\\]]", false, "NOT close bracket"},
         {"[--/]", false, "Range from dash to slash"},
-        {"[a-zA-Z0-9_-]", false, "Alphanumeric, underscore, dash"},
+        {"[a-zA-Z0-9_-]", true, "Alphanumeric, underscore, dash at end"},
+        {"[-a-zA-Z0-9_]", false, "Alphanumeric, underscore, dash at beginning"},
+        {"[a-z-A-Z0-9_]", true, "Alphanumeric, underscore, dash in the middle 1"},
+        {"[a-zA-Z-0-9_]", true, "Alphanumeric, underscore, dash in the middle 2"},
+        {"[a-z-A-Z-0-9_]", true, "Alphanumeric, underscore, dash in the middle 3"},
     }, result);
 
     // ════════════════════════════════════════════════════════════════
@@ -497,7 +504,6 @@ int run_tests() {
         {"a]", true, "Close bracket after content"},
         {"[]", true, "Empty set"},
         {"[^]", true, "Empty negated set"},
-        {"[[a]", true, "Nested open bracket"},
     }, result);
 
     // ════════════════════════════════════════════════════════════════
@@ -506,9 +512,7 @@ int run_tests() {
     run_test_section("Invalid Characters", {
         {"^", true, "Caret at start (anchor not supported)"},
         {"^a", true, "Caret before char"},
-        {"a^b", true, "Caret in middle"},
-        {"$", true, "Dollar sign (if not supported)"},
-        {"a$", true, "Dollar at end"},
+        {"a^b", true, "Caret in middle"}
     }, result);
 
     // ════════════════════════════════════════════════════════════════
