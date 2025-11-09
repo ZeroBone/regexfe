@@ -12,6 +12,7 @@
 
 %type expression {Expression*}
 expression = expression(E) OR conjunction(C); { v = E; v->add_child(C); }
+expression = expression(E) OR ; { v = E; v->add_child(new Conjunction()); }
 expression = conjunction(C); { v = new Expression(C); }
 // empty conjunction
 expression = ;  { v = new Expression(); }

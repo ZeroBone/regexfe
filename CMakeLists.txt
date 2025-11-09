@@ -23,7 +23,11 @@ add_executable(${PROJECT_NAME} src/Parser.h src/main.cpp
         src/ast.hpp
         src/mimir_codegen.hpp
         src/mimir_codegen.cpp
-        src/ast.cpp)
+        src/ast.cpp
+        src/tests.cpp
+        src/regexfe.cpp
+        src/regexfe.hpp
+        src/tests.hpp)
 
 
 if(NOT MSVC)

@@ -9,7 +9,7 @@
 #include "strqueue.hpp"
 #include "token.hpp"
 
-class LexerBackend {
+class LexerBackend final {
     std::istringstream stream;
 
     size_t head = 0;

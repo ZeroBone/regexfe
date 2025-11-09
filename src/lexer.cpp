@@ -75,7 +75,7 @@ bool LexerBackend::read() {
 Token Lexer::lex() {
 
     if (!backend.read()) {
-        return Token(T_EOF, backend.head_position());
+        return Token(T_EOF, backend.head_position() + 1);
     }
 
     backend.move_peek_to_head();
@@ -169,6 +169,14 @@ Token Lexer::lex() {
                 case 'r': {
                     backend.move_head_to_peek();
                     return Token(T_SPECIAL_CHARACTER, backend.head_position(), "\r");
+                }
+                case 'v': {
+                    backend.move_head_to_peek();
+                    return Token(T_SPECIAL_CHARACTER, backend.head_position(), "\v");
+                }
+                case 'f': {
+                    backend.move_head_to_peek();
+                    return Token(T_SPECIAL_CHARACTER, backend.head_position(), "\f");
                 }
                 case '.':
                 case '*':

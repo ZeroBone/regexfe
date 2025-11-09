@@ -42,6 +42,8 @@ public:
         children.push_back(el);
     }
 
+    explicit Conjunction() = default;
+
     void add_child(Match* el) {
         children.push_back(el);
     }

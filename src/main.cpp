@@ -1,15 +1,21 @@
 #include <fstream>
 #include <iostream>
 
-#include "Parser.h"
-#include "lexer.hpp"
 #include "ast.hpp"
+#include "lexer.hpp"
 #include "mimir.hpp"
 #include "mimir_codegen.hpp"
+#include "regexfe.hpp"
+#include "tests.hpp"
 
 int main(int argc, char* argv[]) {
 
     if (argc < 3) {
+        if (argc == 2) {
+            if (std::string first_arg = argv[1]; first_arg == "--run-tests") {
+                return run_tests();
+            }
+        }
         std::cerr << "Usage: " << argv[0] << " <regex_pattern> <file_name> [--dump-mim]" << std::endl;
         return 2;
     }
@@ -29,58 +35,23 @@ int main(int argc, char* argv[]) {
     }
 
     // parse regular expression
-
-    Lexer lexer(regex_pattern);
-    Parser parser;
-    size_t last_token_position = 0;
-
-    while (true) {
-
-        Token token;
-
-        try {
-            token = lexer.lex();
-        }
-        catch (const LexerError& e) {
-            std::cerr << e << std::endl;
-            return 1;
-        }
-
-        // std::cout << token.id << std::endl;
-
-        last_token_position = token.position;
-
-        Parser::StackEntryPayload payload;
-
-        switch (token.id) {
-            case T_CHARACTER:
-            case T_SPECIAL_CHARACTER:
-                payload.CHARACTER = token.payload.front();
-                break;
-
-            default:
-                break;
-        }
-
-        if (!parser.parse(token.id, payload)) {
-            break;
-        }
-
-        if (token.id == T_EOF) {
-            break;
-        }
-
+    Expression* expression;
+    try {
+        expression = parse_regex(regex_pattern);
     }
-
-    if (!parser.successfullyParsed()) {
-        std::cerr << (last_token_position + 1) << ": error: parsing error: invalid syntax." << std::endl;
+    catch (const LexerError& e) {
+        std::cerr << e << std::endl;
+        return 1;
+    }
+    catch (const ParserError& e) {
+        std::cerr << e << std::endl;
         return 1;
     }
 
-    Expression* expression = parser.getValue().expression;
     MimirCodeGen code_gen;
-
     MimRegex regex = expression->generateMimIR(code_gen);
+
+    delete expression;
 
     if (dump_mim) {
         std::cout << regex << std::endl;
