@@ -39,26 +39,7 @@ MimRegex Expression::generateMimIR(MimirCodeGen& code_gen) const {
 
 }
 
-MimRegex characterClassToClassRegex(MimirCodeGen& code_gen, const CharacterClass cls) {
-    switch (cls) {
-        case CharacterClass::WordChars:
-            return code_gen.regex_class(cls::w);
-        case CharacterClass::NonWordChars:
-            return code_gen.regex_class(cls::W);
-        case CharacterClass::DigitChars:
-            return code_gen.regex_class(cls::d);
-        case CharacterClass::NonDigitChars:
-            return code_gen.regex_class(cls::D);
-        case CharacterClass::WhiteSpaceChars:
-            return code_gen.regex_class(cls::s);
-        case CharacterClass::NonWhiteSpaceChars:
-            return code_gen.regex_class(cls::S);
-        default:
-            assert(false);
-    }
-}
-
-MimRegex characterClassToRangeRegex(MimirCodeGen& code_gen, const CharacterClass cls) {
+MimRegex characterClassToRegex(MimirCodeGen& code_gen, const CharacterClass cls) {
 
     switch (cls) {
 
@@ -123,7 +104,7 @@ MimRegex CharacterSet::generateMimIR(MimirCodeGen& code_gen, const bool negate, 
     }
 
     for (const CharacterClass cls : classes) {
-        regexes.push_back(!negate ? characterClassToClassRegex(code_gen, cls) : characterClassToRangeRegex(code_gen, cls));
+        regexes.push_back(characterClassToRegex(code_gen, cls));
     }
 
     assert(!regexes.empty());
@@ -134,7 +115,7 @@ MimRegex CharacterSet::generateMimIR(MimirCodeGen& code_gen, const bool negate, 
 }
 
 MimRegex CharacterClassMatchElement::generateMimIR(MimirCodeGen& code_gen) const {
-    return characterClassToClassRegex(code_gen, char_class);
+    return characterClassToRegex(code_gen, char_class);
 }
 
 MimRegex CharacterAlt::generateMimIR(MimirCodeGen& code_gen) const {
