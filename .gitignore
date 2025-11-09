@@ -43,6 +43,7 @@
 *.jar
 .idea
 src/Parser_debug.txt
+src/Parser.h
 mimir
 !src/mimir
 test.txt
